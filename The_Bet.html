@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Bet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Schoolbell&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --yellow:#ffcc00;
+  --black:#111;
+  --blue:#87ceeb;
+  --paper:#fef9e7;
+  --night:#0b192c;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:"Patrick Hand",cursive;
+  color:var(--black);
+  background:var(--blue);
+  user-select:none;
+  transition:background 1.2s ease;
+}
+
+button{
+  font-family:"Schoolbell","Patrick Hand",cursive;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.fade{
+  animation:fade .8s ease;
+}
+
+@keyframes fade{
+  from{
+    opacity:0;
+    transform:translateY(15px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+
+#youtubePlayer{
+  position:fixed;
+  width:1px;
+  height:1px;
+  left:-10px;
+  bottom:-10px;
+  opacity:0;
+  pointer-events:none;
+}
+
+#musicBar{
+  position:fixed;
+  z-index:100;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(92%,430px);
+  height:48px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 14px;
+  background:rgba(255,255,255,.94);
+  border:2px solid var(--black);
+  border-radius:30px;
+  box-shadow:3px 3px 0 rgba(0,0,0,.8);
+}
+
+.music-icon{
+  width:32px;
+  height:32px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--yellow);
+  border:2px solid var(--black);
+  border-radius:50%;
+  font-size:17px;
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.08);
+  }
+}
+
+.music-info{
+  min-width:0;
+  overflow:hidden;
+}
+
+.music-label{
+  display:block;
+  font-family:Arial,sans-serif;
+  font-size:8px;
+  font-weight:bold;
+  letter-spacing:1px;
+  color:#888;
+  text-transform:uppercase;
+}
+
+#trackTitle{
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-size:16px;
+}
+
+
+#phase1{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-bottom:65px;
+  overflow:hidden;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255,255,255,.35) 0 3px,
+      transparent 4px
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(255,255,255,.3) 0 4px,
+      transparent 5px
+    ),
+    var(--blue);
+}
+
+.cloud{
+  position:absolute;
+  background:#fff;
+  border:3px solid var(--black);
+  border-radius:50px;
+  opacity:.65;
+  animation:cloudMove linear infinite;
+}
+
+.cloud:before,
+.cloud:after{
+  content:"";
+  position:absolute;
+  background:#fff;
+  border:3px solid var(--black);
+  border-radius:50%;
+}
+
+.cloud:before{
+  width:45px;
+  height:45px;
+  left:15px;
+  top:-25px;
+}
+
+.cloud:after{
+  width:35px;
+  height:35px;
+  right:15px;
+  top:-18px;
+}
+
+.cloud.one{
+  width:110px;
+  height:40px;
+  top:15%;
+  left:-130px;
+  animation-duration:28s;
+}
+
+.cloud.two{
+  width:150px;
+  height:50px;
+  top:38%;
+  left:-180px;
+  animation-duration:35s;
+  animation-delay:8s;
+}
+
+@keyframes cloudMove{
+  to{
+    transform:translateX(125vw);
+  }
+}
+
+.intro-content{
+  position:relative;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  width:min(90vw,600px);
+}
+
+.snoopy-frame{
+  width:clamp(120px,23vw,195px);
+  height:clamp(120px,23vw,195px);
+  object-fit:contain;
+  background:white;
+  border:4px solid var(--black);
+  border-radius:50%;
+  box-shadow:6px 6px 0 var(--black);
+  animation:snoopyFloat 4s ease-in-out infinite;
+  margin-bottom:-3px;
+}
+
+@keyframes snoopyFloat{
+  0%,100%{
+    transform:translateY(0) rotate(-1deg);
+  }
+  50%{
+    transform:translateY(-7px) rotate(1deg);
+  }
+}
+
+.intro-card{
+  background:white;
+  width:fit-content;
+  max-width:90vw;
+  padding:clamp(18px,3vw,28px) clamp(25px,5vw,48px);
+  text-align:center;
+  border:4px solid var(--black);
+  border-radius:25px 12px 28px 15px;
+  box-shadow:7px 7px 0 var(--black);
+}
+
+.intro-card h1{
+  margin:0;
+  font-family:"Schoolbell","Patrick Hand",cursive;
+  font-size:clamp(2.2rem,6vw,4.4rem);
+  line-height:1;
+  font-weight:400;
+}
+
+.intro-button-label{
+  position:absolute;
+  z-index:10;
+  bottom:clamp(15%,17vh,19%);
+  left:50%;
+  transform:translateX(-50%);
+  color:#555;
+  font-family:"Schoolbell",cursive;
+  font-size:clamp(1rem,2.5vw,1.4rem);
+  white-space:nowrap;
+  pointer-events:none;
+  animation:labelFloat 2.5s ease-in-out infinite;
+}
+
+@keyframes labelFloat{
+  0%,100%{
+    transform:translateX(-50%) translateY(0);
+  }
+  50%{
+    transform:translateX(-50%) translateY(-3px);
+  }
+}
+
+#chaseBtn{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  bottom:8%;
+  transform:translateX(-50%);
+  padding:clamp(10px,2vw,15px) clamp(25px,5vw,38px);
+  font-size:clamp(1.2rem,3vw,1.8rem);
+  background:white;
+  color:var(--black);
+  border:4px solid var(--black);
+  border-radius:18px 10px 20px 12px;
+  box-shadow:6px 6px 0 var(--black);
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.decor{
+  position:absolute;
+  z-index:2;
+  opacity:.5;
+  pointer-events:none;
+  font-size:clamp(20px,3vw,32px);
+  animation:decorFloat 5s ease-in-out infinite;
+}
+
+.d1{
+  top:18%;
+  left:10%;
+}
+
+.d2{
+  top:22%;
+  right:10%;
+  animation-delay:1s;
+}
+
+.d3{
+  bottom:28%;
+  left:15%;
+  animation-delay:.5s;
+}
+
+.d4{
+  bottom:30%;
+  right:15%;
+  animation-delay:1.5s;
+}
+
+@keyframes decorFloat{
+  0%,100%{
+    transform:translateY(0) rotate(-3deg);
+  }
+  50%{
+    transform:translateY(-8px) rotate(3deg);
+  }
+}
+
+
+#phase2{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:25px 15px 75px;
+  background:var(--paper);
+}
+
+.notes{
+  width:min(100%,520px);
+  height:min(90vh,760px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:white;
+  border:4px solid var(--black);
+  border-radius:20px;
+  box-shadow:8px 8px 0 var(--black);
+}
+
+.notes-header{
+  flex:none;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:var(--yellow);
+  border-bottom:4px solid var(--black);
+  font-size:22px;
+}
+
+.notes-header span:last-child{
+  font-size:18px;
+}
+
+.zigzag{
+  flex:none;
+  height:25px;
+  background:
+    linear-gradient(135deg,var(--yellow) 25%,transparent 25%) -15px 0,
+    linear-gradient(225deg,var(--yellow) 25%,transparent 25%) -15px 0,
+    linear-gradient(315deg,var(--yellow) 25%,transparent 25%),
+    linear-gradient(45deg,var(--yellow) 25%,transparent 25%);
+  background-size:30px 30px;
+  background-color:var(--black);
+  border-bottom:3px solid var(--black);
+}
+
+.notes-body{
+  flex:1;
+  overflow-y:auto;
+  padding:25px clamp(20px,5vw,35px) 100px;
+  background-color:var(--paper);
+  background-image:linear-gradient(#ccc 1px,transparent 1px);
+  background-size:100% 40px;
+  line-height:40px;
+}
+
+.notes-body h2{
+  margin:0 0 2px;
+  font-family:"Schoolbell",cursive;
+  font-size:clamp(2rem,7vw,3rem);
+  line-height:1.1;
+}
+
+.date{
+  margin-bottom:20px;
+  color:#999;
+  font-family:Arial,sans-serif;
+  font-size:11px;
+  line-height:1.4;
+}
+
+#reasonsList{
+  margin:0;
+  padding:0;
+  list-style:none;
+  font-size:clamp(1.15rem,3vw,1.45rem);
+}
+
+#reasonsList li{
+  display:flex;
+  gap:12px;
+  margin-bottom:5px;
+  line-height:1.35;
+}
+
+.reason-number{
+  min-width:28px;
+  text-align:right;
+  color:#777;
+  font-weight:bold;
+}
+
+.next-area{
+  position:absolute;
+  bottom:25px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.next-btn{
+  padding:11px 25px;
+  background:var(--yellow);
+  border:4px solid var(--black);
+  border-radius:16px;
+  box-shadow:5px 5px 0 var(--black);
+  font-size:clamp(1.1rem,3vw,1.4rem);
+  cursor:pointer;
+}
+
+.next-btn:active{
+  transform:translate(4px,4px);
+  box-shadow:1px 1px 0 var(--black);
+}
+
+
+
+#phase3{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px 20px 75px;
+  background:var(--night);
+  overflow:hidden;
+}
+
+.stars{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.star{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:white;
+  border-radius:50%;
+  animation:twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle{
+  0%,100%{
+    opacity:.2;
+    transform:scale(.7);
+  }
+  50%{
+    opacity:1;
+    transform:scale(1.4);
+  }
+}
+
+.moon{
+  position:absolute;
+  top:8%;
+  right:9%;
+  width:clamp(55px,10vw,90px);
+  height:clamp(55px,10vw,90px);
+  background:#fff4c4;
+  border:4px solid var(--black);
+  border-radius:50%;
+  box-shadow:inset -10px -8px 0 rgba(0,0,0,.08);
+}
+
+.poem-card{
+  position:relative;
+  z-index:5;
+  width:min(92%,650px);
+  max-height:75vh;
+  overflow:auto;
+  padding:clamp(25px,5vw,50px);
+  background:rgba(0,0,0,.35);
+  border:3px solid white;
+  border-radius:22px;
+  box-shadow:7px 7px 0 rgba(255,255,255,.2);
+  color:white;
+}
+
+#poemContainer{
+  font-size:clamp(1.25rem,3.5vw,2rem);
+  line-height:1.65;
+  text-align:left;
+  white-space:normal;
+}
+
+.cursor{
+  display:inline-block;
+  width:3px;
+  height:1.2em;
+  margin-left:3px;
+  background:white;
+  vertical-align:middle;
+  animation:blink 1s step-end infinite;
+}
+
+@keyframes blink{
+  50%{
+    opacity:0;
+  }
+}
+
+.snoopy-bottom{
+  position:absolute;
+  z-index:4;
+  bottom:65px;
+  left:50%;
+  transform:translateX(-50%);
+  width:clamp(100px,18vw,150px);
+}
+
+.snoopy-bottom img{
+  width:100%;
+  object-fit:contain;
+}
+
+
+@media(max-width:600px){
+
+  #phase1{
+    padding-bottom:60px;
+  }
+
+  .snoopy-frame{
+    width:135px;
+    height:135px;
+    border-width:3px;
+    box-shadow:5px 5px 0 var(--black);
+  }
+
+  .intro-card{
+    border-width:3px;
+    box-shadow:5px 5px 0 var(--black);
+  }
+
+  .intro-card h1{
+    font-size:clamp(2.1rem,10vw,3.3rem);
+  }
+
+  #chaseBtn{
+    border-width:3px;
+    box-shadow:5px 5px 0 var(--black);
+  }
+
+  .notes{
+    height:calc(100vh - 105px);
+    border-width:3px;
+  }
+
+  .notes-header{
+    padding:12px 15px;
+  }
+
+  .notes-body{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+  .poem-card{
+    max-height:72vh;
+    padding:25px 20px;
+  }
+}
+
+@media(max-height:650px){
+
+  .snoopy-frame{
+    width:100px;
+    height:100px;
+  }
+
+  .intro-card{
+    padding:14px 20px;
+  }
+
+  .intro-card h1{
+    font-size:2.3rem;
+  }
+
+  #chaseBtn{
+    bottom:7%;
+  }
+
+  .intro-button-label{
+    bottom:15%;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+
+<div id="youtubePlayer"></div>
+<div id="musicBar">
+
+  <div class="music-icon">
+    ♪
+  </div>
+
+  <div class="music-info">
+
+    <span class="music-label">
+      Now playing
+    </span>
+
+    <span id="trackTitle">
+      Waiting for music...
+    </span>
+
+  </div>
+
+</div>
+<section id="phase1">
+
+  <div class="cloud one"></div>
+  <div class="cloud two"></div>
+
+  <div class="decor d1">♡</div>
+  <div class="decor d2">♡</div>
+  <div class="decor d3">✦</div>
+  <div class="decor d4">♡</div>
+
+  <div class="intro-content">
+
+    <img
+      class="snoopy-frame"
+      src="https://media.tenor.com/images/0f44b42afe02eaed61fab75fb3e30f3a/tenor.gif"
+      alt="Snoopy"
+    >
+
+    <div class="intro-card">
+      <h1>Catch me if you can</h1>
+    </div>
+
+  </div>
+
+  <div class="intro-button-label">
+    click me
+  </div>
+
+  <button id="chaseBtn">
+    Click me
+  </button>
+
+</section>
+
+<section id="phase2" class="hidden">
+
+  <div class="notes">
+
+    <div class="notes-header">
+
+      <span>
+        ‹ Notes
+      </span>
+
+      <span>
+        100 Reasons
+      </span>
+
+    </div>
+
+    <div class="zigzag"></div>
+
+    <div class="notes-body">
+
+      <h2>
+        100 Reasons Why I Love You
+      </h2>
+
+      <div class="date">
+        Today at 2:02 PM
+      </div>
+
+      <ul id="reasonsList"></ul>
+
+    </div>
+
+    <div class="next-area">
+
+      <button
+        class="next-btn"
+        onclick="goToPhase3()"
+      >
+        Next Phase →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section id="phase3" class="hidden">
+
+  <div
+    class="stars"
+    id="stars"
+  ></div>
+
+  <div class="moon"></div>
+
+  <div class="poem-card">
+
+    <div id="poemContainer"></div>
+
+    <span
+      id="cursor"
+      class="cursor"
+    ></span>
+
+  </div>
+
+  <div class="snoopy-bottom">
+
+    <img
+      src="https://i.pinimg.com/originals/72/b0/d9/72b0d9f6b318ebc21dfbec60d1690c15.gif"
+      alt="Snoopy"
+    >
+
+  </div>
+
+</section>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+
+<script>
+const playlist = [
+
+  {
+    title:"Can't Help Falling In Love · Elvis Presley",
+    id:"LJRA8UrlqCM"
+  },
+
+  {
+    title:"Malay Ko · Daniel Padilla",
+    id:"4zYL2AmwC8g"
+  }
+
+];
+
+
+let player;
+let songIndex = 0;
+let musicStarted = false;
+let youtubeReady = false;
+
+function onYouTubeIframeAPIReady(){
+
+  player = new YT.Player(
+    "youtubePlayer",
+    {
+
+      height:"1",
+      width:"1",
+
+      videoId:
+        playlist[0].id,
+
+      playerVars:{
+        autoplay:0,
+        controls:0,
+        disablekb:1,
+        fs:0,
+        modestbranding:1,
+        playsinline:1,
+        rel:0
+      },
+
+      events:{
+        onReady:onPlayerReady,
+        onStateChange:onPlayerStateChange
+      }
+
+    }
+  );
+
+}
+
+
+function onPlayerReady(){
+
+  youtubeReady = true;
+
+}
+
+
+function startMusic(){
+
+  if(musicStarted){
+    return;
+  }
+
+  if(!youtubeReady || !player){
+    return;
+  }
+
+  musicStarted = true;
+
+  playCurrentSong();
+
+}
+
+
+function playCurrentSong(){
+
+  if(!player){
+    return;
+  }
+
+  const song =
+    playlist[songIndex];
+
+  trackTitle.textContent =
+    song.title;
+
+  player.loadVideoById(
+    song.id
+  );
+
+  player.setVolume(45);
+
+}
+
+
+function onPlayerStateChange(event){
+
+  /*
+     YT.PlayerState.ENDED = 0
+  */
+
+  if(
+    event.data ===
+    YT.PlayerState.ENDED
+  ){
+
+    songIndex++;
+
+    if(
+      songIndex >=
+      playlist.length
+    ){
+
+      songIndex = 0;
+
+    }
+
+    playCurrentSong();
+
+  }
+
+}
+
+document.addEventListener(
+  "click",
+  startMusic,
+  {once:true}
+);
+
+document.addEventListener(
+  "touchstart",
+  startMusic,
+  {
+    once:true,
+    passive:true
+  }
+);
+
+const chaseBtn =
+  document.getElementById(
+    "chaseBtn"
+  );
+
+let jumps = 0;
+
+const maxJumps = 6;
+
+
+function moveButton(e){
+
+  if(
+    e.type ===
+    "touchstart"
+  ){
+
+    e.preventDefault();
+
+  }
+
+  startMusic();
+
+
+  if(
+    jumps < maxJumps
+  ){
+
+    const buttonWidth =
+      chaseBtn.offsetWidth;
+
+    const buttonHeight =
+      chaseBtn.offsetHeight;
+
+
+    const maxX =
+      window.innerWidth -
+      buttonWidth -
+      25;
+
+
+    const maxY =
+      window.innerHeight -
+      buttonHeight -
+      105;
+
+
+    const x =
+      Math.max(
+        15,
+        Math.random() *
+        maxX
+      );
+
+
+    const y =
+      Math.max(
+        15,
+        Math.random() *
+        maxY
+      );
+
+
+    chaseBtn.style.position =
+      "fixed";
+
+    chaseBtn.style.left =
+      x + "px";
+
+    chaseBtn.style.top =
+      y + "px";
+
+    chaseBtn.style.bottom =
+      "auto";
+
+
+    const rotation =
+      (Math.random() - .5) *
+      25;
+
+
+    chaseBtn.style.transform =
+      `rotate(${rotation}deg)`;
+
+
+    jumps++;
+
+
+  }else{
+
+    chaseBtn.textContent =
+      "Okay... you got me! 🐾";
+
+
+    chaseBtn.style.background =
+      "#ffcc00";
+
+
+    chaseBtn.style.transform =
+      "rotate(0deg)";
+
+
+    chaseBtn.removeEventListener(
+      "mouseover",
+      moveButton
+    );
+
+
+    chaseBtn.removeEventListener(
+      "touchstart",
+      moveButton
+    );
+
+
+    chaseBtn.addEventListener(
+      "click",
+      goToPhase2
+    );
+
+
+    jumps++;
+
+  }
+
+}
+
+
+chaseBtn.addEventListener(
+  "mouseover",
+  moveButton
+);
+
+
+chaseBtn.addEventListener(
+  "touchstart",
+  moveButton,
+  {
+    passive:false
+  }
+);
+
+
+const reasons = [
+
+  "I love your laugh.",
+  "I love your eyes.",
+  "I love how you talk.",
+  "I love how you always seem to find a way to help the people around you.",
+  "I love how you communicate.",
+  "I love how you never give up.",
+  "I love how you love God.",
+  "I love your humor.",
+  "I love how you sing.",
+  "I love how you tell your chikas.",
+  "I love how understanding you are.",
+  "I love how you walk.",
+  "I love how hardworking you are.",
+  "I love how strong you are.",
+  "I love your curiosity.",
+  "I love how the smallest things amazes you.",
+  "I love how you want to try everything.",
+  "I love your hands.",
+  "I love the way you say my name.",
+  "I love your weirdness.",
+  "I love your randomness.",
+  "I love how mental you get when you're happy.",
+  "I love that you can be easily trusted.",
+  "I love that you can make everybody around you feel comfortable.",
+  "I love it when you're shy.",
+  "I love it when you're not shy.",
+  "I love that you’re a positive person.",
+  "I love every nickname/call sign/alias you use to call people.",
+  "I love how you smile.",
+  "I love how soft-hearted you are.",
+  "I love your late night thoughts.",
+  "I love how you make me smile.",
+  "I love that you're romantic.",
+  "I love that you remember the most random things we have talked about in the past.",
+  "I love the calming sound of your voice.",
+  "I love how you explore things.",
+  "I love how you appreciate the small things in life.",
+  "I love that conversations about the future doesn’t scare you away.",
+  "I love how easily distracted you get.",
+  "I love your hair.",
+  "I love how you make me a better person.",
+  "I love how I can be myself when I am with you.",
+  "I love how you believed in me back in Grade 7.",
+  "I love how you've inspired me.",
+  "I love how you congratulate me.",
+  "I love how politically aware you are.",
+  "I love how you make me feel safe.",
+  "I love that we can talk about anything.",
+  "I love how much you have helped me improve my life.",
+  "I love your ate side.",
+  "I love how I can sandal on you because I am taller😝.",
+  "I love how we used to walk together to school and after school.",
+  "I love how you'll sacrifice everything for stuff you really love.",
+  "I love how lazy you are.",
+  "I love how hardworking you are.",
+  "I love how approachable you are.",
+  "I love your preferences.",
+  "I love your likes for books.",
+  "I love your interest for stories.",
+  "I love how different and similar we are to one another.",
+  "I love how I can trust you.",
+  "I love your imaginative mind.",
+  "I love your small and big ideas.",
+  "I love how dumb you can get.",
+  "I love how knowledgeable you are.",
+  "I love how you keep going through life.",
+  "I love your compliments (6767).",
+  "I love your look when you write your notes.",
+  "I love how you can easily laugh.",
+  "I love how prideful you are.",
+  "I love how humble you are.",
+  "I love your unserious side.",
+  "I love how serious you can get.",
+  "I love the memes you've collected.",
+  "I love your school ethics.",
+  "I love how you inspire other people.",
+  "I love how you can be the ate of the group.",
+  "I love how you can be the bunso of the group.",
+  "I love how you comfort people.",
+  "I love how straightforward you can get.",
+  "I love how gullible you can be.",
+  "I love how you cry.",
+  "I love how you get angry.",
+  "I love your annoyed face.",
+  "I love how you annoy people.",
+  "I love how you ask for opinions.",
+  "I love how you've made me softer than I was before.",
+  "I love that I can trust you with anything.",
+  "I love how you can make ordinary days feel special.",
+  "I love how you love the people around you.",
+  "I love your music taste.",
+  "I love how the topic could change so much when talking with you.",
+  "I love your intense chikas.",
+  "I love how easily you can fall asleep.",
+  "I love how serious you take your studies seriously.",
+  "I love how you treat the things around you.",
+  "I love your random reklamos.",
+  "I love how you can be a bully.",
+  "I love how kind you can be.",
+  "I love your sleepy voice."
+
+];
+
+
+const reasonsList =
+  document.getElementById(
+    "reasonsList"
+  );
+
+
+for(
+  let i = 0;
+  i < reasons.length;
+  i++
+){
+
+  const li =
+    document.createElement(
+      "li"
+    );
+
+
+  const number =
+    document.createElement(
+      "span"
+    );
+
+  number.className =
+    "reason-number";
+
+  number.textContent =
+    (i + 1) + ".";
+
+
+  const text =
+    document.createElement(
+      "span"
+    );
+
+  text.textContent =
+    reasons[i];
+
+
+  li.appendChild(number);
+
+  li.appendChild(text);
+
+  reasonsList.appendChild(li);
+
+}
+
+
+const phase1 =
+  document.getElementById(
+    "phase1"
+  );
+
+const phase2 =
+  document.getElementById(
+    "phase2"
+  );
+
+const phase3 =
+  document.getElementById(
+    "phase3"
+  );
+
+
+function goToPhase2(){
+
+  phase1.classList.add(
+    "hidden"
+  );
+
+  phase2.classList.remove(
+    "hidden"
+  );
+
+  phase2.classList.add(
+    "fade"
+  );
+
+  document.body.style.background =
+    "var(--paper)";
+
+}
+
+
+function goToPhase3(){
+
+  phase2.classList.add(
+    "hidden"
+  );
+
+  phase3.classList.remove(
+    "hidden"
+  );
+
+  phase3.classList.add(
+    "fade"
+  );
+
+  document.body.style.background =
+    "var(--night)";
+
+
+  generateStars();
+
+
+  setTimeout(
+    startTypewriter,
+    700
+  );
+
+}
+
+function generateStars(){
+
+  const container =
+    document.getElementById(
+      "stars"
+    );
+
+
+  container.innerHTML = "";
+
+
+  for(
+    let i = 0;
+    i < 55;
+    i++
+  ){
+
+    const star =
+      document.createElement(
+        "div"
+      );
+
+
+    star.className =
+      "star";
+
+
+    const size =
+      Math.random() * 3 + 1;
+
+
+    star.style.width =
+      size + "px";
+
+
+    star.style.height =
+      size + "px";
+
+
+    star.style.left =
+      Math.random() * 100 + "%";
+
+
+    star.style.top =
+      Math.random() * 100 + "%";
+
+
+    star.style.animationDelay =
+      Math.random() * 3 + "s";
+
+
+    container.appendChild(
+      star
+    );
+
+  }
+
+}
+
+
+const poem = `Hey Je,
+I know its been a while since we've talked properly. I know this might seem random and might even push you away, but I just want to express what I trully feel. do you remember our bet way back 2025? If not, its okay. Its been a long year since then. If I remember correctly our bet was about me not making it a year in pursuing you. You said back then I wouldn't even last a year, and I told you I would then one thing lead to another, a 500 pesos bet was set. Je, guess what. Its been one year 😝😝. I guess I was right. I hope you're doing well and great over there in Taguig. I hope that your studies are doing great! I really pray you never lose your sparl in competing in taekwondo, cause you really are good at it. No matter what they say, in my eyes you are good at it. This website wasn't intended to get back to you or something, its just for my own satisfaction and my way of telling you everything, and also a way of reminding you of our bet hehe. I don't want to make this thing longer anymore, so I would like to end it by saying, I appreciate you <3.
+
+Sencerely,
+Yvo`;
+
+
+const poemContainer =
+  document.getElementById(
+    "poemContainer"
+  );
+
+const cursor =
+  document.getElementById(
+    "cursor"
+  );
+
+
+let poemIndex = 0;
+
+
+function startTypewriter(){
+
+  poemContainer.innerHTML =
+    "";
+
+  poemIndex = 0;
+
+  typeNextCharacter();
+
+}
+
+
+function typeNextCharacter(){
+
+  if(
+    poemIndex >=
+    poem.length
+  ){
+
+    cursor.style.display =
+      "inline-block";
+
+    return;
+
+  }
+
+
+  const character =
+    poem.charAt(
+      poemIndex
+    );
+
+
+  if(
+    character === "\n"
+  ){
+
+    poemContainer.innerHTML +=
+      "<br>";
+
+  }else{
+
+    poemContainer.innerHTML +=
+      character;
+
+  }
+
+
+  poemIndex++;
+
+
+  const speed =
+    Math.random() * 70 + 35;
+
+
+  setTimeout(
+    typeNextCharacter,
+    speed
+  );
+
+}
+
+</script>
+
+</body>
+</html>
